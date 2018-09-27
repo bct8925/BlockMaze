@@ -52,7 +52,7 @@ public class Solver {
         makeMove();
       }
       solvable = Boolean.TRUE;
-    } catch (Exception stackEx) {
+    } catch (EmptyStackException empty) {
       solvable = Boolean.FALSE;
     }
   }

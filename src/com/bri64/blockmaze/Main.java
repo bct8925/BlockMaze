@@ -3,6 +3,10 @@ package com.bri64.blockmaze;
 import com.bri64.blockmaze.model.Game;
 import com.bri64.blockmaze.model.PuzzleData;
 import com.bri64.blockmaze.model.Solution;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.util.List;
 import javafx.geometry.Point2D;
 
@@ -28,6 +32,26 @@ public class Main {
     String command = args[0];
 
     switch (command) {
+      case "-generate":
+        PuzzleGenerator generator = new PuzzleGenerator(15, 15, 15, 15);
+
+        Gson gson = new GsonBuilder().addSerializationExclusionStrategy(new ExclusionStrategy() {
+          @Override
+          public boolean shouldSkipField(FieldAttributes field) {
+            return field.getName().equals("hash");
+          }
+
+          @Override
+          public boolean shouldSkipClass(Class<?> clazz) {
+            return false;
+          }
+        }).create();
+
+        PuzzleData generated = generator.nextGame();
+        //System.out.println(generated);
+        //new Solver(new Game(generated)).show(150);
+        System.out.println(gson.toJson(generated));
+        break;
       case "-show":
         test(s);
         s.show(Integer.parseInt(args[1]));
@@ -62,6 +86,7 @@ public class Main {
         System.out.println("Invalid arguments!");
         break;
     }
+    System.exit(0);
   }
 
   private void test(Solver s) {
