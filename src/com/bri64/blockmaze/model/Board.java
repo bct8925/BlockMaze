@@ -4,28 +4,59 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.geometry.Point2D;
 
+/**
+ * A mutable object representing a two-dimensional Board of {@link Block Blocks}
+ */
 @SuppressWarnings("WeakerAccess")
 public class Board {
 
+  /**
+   * The width of the Board
+   */
   private int width;
+
+  /**
+   * The height of the Board
+   */
   private int height;
+
+  /**
+   * A two-dimensional {@link List list} of {@link Block Blocks}
+   */
   private List<List<Block>> board;
 
+  /**
+   * Get the Board's width
+   * @return the width
+   */
   public int getWidth() {
     return width;
   }
 
+  /**
+   * Get the Board's height
+   * @return the height
+   */
   public int getHeight() {
     return height;
   }
 
+  /**
+   * Creates a Board based on a {@link PuzzleData PuzzleData}
+   * @param data the {@link PuzzleData PuzzleData} to build from
+   */
   public Board(final PuzzleData data) {
     this(data.getWidth(), data.getHeight());
     for (Point2D p : data.getHoles()) {
-      fillBlock(p, BlockType.HOLE);
+      fillBlock(p, BlockState.HOLE);
     }
   }
 
+  /**
+   * Creates an empty Board
+   * @param width the width
+   * @param height the height
+   */
   public Board(int width, int height) {
     this.width = width;
     this.height = height;
@@ -34,30 +65,44 @@ public class Board {
     for (int i = 0; i < width; i++) {
       List<Block> temp = new ArrayList<>();
       for (int j = 0; j < height; j++) {
-        temp.add(new Block(this, BlockType.EMPTY));
+        temp.add(new Block(this, BlockState.EMPTY));
       }
       board.add(temp);
     }
   }
 
-  public Board(final Board b) {
-    this.width = b.getWidth();
-    this.height = b.getHeight();
+  /**
+   * Creates a copy of the given Board
+   * @param copy the Board to copy from
+   */
+  public Board(final Board copy) {
+    this.width = copy.getWidth();
+    this.height = copy.getHeight();
     this.board = new ArrayList<>();
 
     for (int i = 0; i < width; i++) {
       List<Block> temp = new ArrayList<>();
       for (int j = 0; j < height; j++) {
-        temp.add(new Block(this, b.getBlock(new Point2D(i, j)).getType()));
+        temp.add(new Block(this, copy.getBlock(new Point2D(i, j)).getState()));
       }
       board.add(temp);
     }
   }
 
+  /**
+   * Gets the {@link Block Block} at the given {@link Point2D Position}
+   * @param pos the {@link Point2D Position}
+   * @return the {@link Block Block}
+   */
   public Block getBlock(Point2D pos) {
     return board.get((int) pos.getX()).get((int) pos.getY());
   }
 
+  /**
+   * Gets the {@link Point2D Position} of a given {@link Block block}
+   * @param block the {@link Block Block}
+   * @return the {@link Point2D Position}
+   */
   public Point2D getPos(Block block) {
     int x = -1;
     int y = -1;
@@ -76,42 +121,60 @@ public class Board {
     return new Point2D(x, y);
   }
 
-  public void fillBlock(Point2D pos, BlockType type) {
+  /**
+   * Fills a {@link Block Block} at some {@link Point2D Position}
+   * @param pos the {@link Point2D Position} of the {@link Block Block} to fill
+   * @param type the {@link BlockState State} of the new {@link Block Block}
+   */
+  public void fillBlock(Point2D pos, BlockState type) {
     board.get((int) pos.getX()).set((int) pos.getY(), new Block(this, type));
   }
 
+  /**
+   * Gets the {@link Block Blocks} that are adjacent and empty
+   * @param block the {@link Block Block} to check
+   * @return a {@link List List} of {@link Block Blocks}
+   */
   public List<Block> openSides(Block block) {
-    Point2D curBlock = getPos(block);
-    if (curBlock.getX() == -1 || curBlock.getY() == -1) {
+    return openSides(block.getPos());
+  }
+
+  /**
+   * Gets the {@link Block Blocks} that are adjacent and empty
+   * @param pos the {@link Point2D Position} of the {@link Block Block} to check
+   * @return a {@link List List} of {@link Block Blocks}
+   */
+  private List<Block> openSides(Point2D pos) {
+    if (pos.getX() == -1 || pos.getY() == -1) {
       return new ArrayList<>();
     }
 
     List<Block> open = new ArrayList<>();
     Block cur;
 
-    if (curBlock.getX() + 1 != width) {
-      cur = getBlock(new Point2D(curBlock.getX() + 1, curBlock.getY()));
+    if (pos.getX() + 1 != width) {
+      cur = getBlock(new Point2D(pos.getX() + 1, pos.getY()));
       if (!cur.isSolid()) {
         open.add(cur);
       }
     }
 
-    if (curBlock.getX() - 1 != -1) {
-      cur = getBlock(new Point2D(curBlock.getX() - 1, curBlock.getY()));
+    if (pos.getX() - 1 != -1) {
+      cur = getBlock(new Point2D(pos.getX() - 1, pos.getY()));
       if (!cur.isSolid()) {
         open.add(cur);
       }
     }
 
-    if (curBlock.getY() + 1 != height) {
-      cur = getBlock(new Point2D(curBlock.getX(), curBlock.getY() + 1));
+    if (pos.getY() + 1 != height) {
+      cur = getBlock(new Point2D(pos.getX(), pos.getY() + 1));
       if (!cur.isSolid()) {
         open.add(cur);
       }
     }
 
-    if (curBlock.getY() - 1 != -1) {
-      cur = getBlock(new Point2D(curBlock.getX(), curBlock.getY() - 1));
+    if (pos.getY() - 1 != -1) {
+      cur = getBlock(new Point2D(pos.getX(), pos.getY() - 1));
       if (!cur.isSolid()) {
         open.add(cur);
       }
@@ -120,6 +183,12 @@ public class Board {
     return open;
   }
 
+  /**
+   * Gets all of a {@link Block Block's} empty neighbors (and their neighbors, etc.)
+   * @param start the {@link Block Block} to start from
+   * @param list the {@link List List} of already found neighbors (pass "null" to begin)
+   * @return the {@link List List} of all neighbors
+   */
   private List<Block> allNeighbors(Block start, List<Block> list) {
     if (list == null) {
       list = new ArrayList<>();
@@ -131,7 +200,7 @@ public class Board {
       list.add(start);
 
       // For each neighbor
-      for (Block b : openSides(start)) {
+      for (Block b : start.openSides()) {
         // Add it and its neighbors
         if (!list.contains(b)) {
           allNeighbors(b, list);
@@ -141,14 +210,18 @@ public class Board {
     return list;
   }
 
+  /**
+   * Gets the {@link Block Block} on the Board with the least open sides
+   * @return the {@link Block Block}
+   */
   private Block leastSides() {
     int sides = 4;
     Block least = null;
 
     for (List<Block> l : board) {
       for (Block b : l) {
-        if (b.getType() == BlockType.EMPTY) {
-          int cur = openSides(b).size();
+        if (b.getState() == BlockState.EMPTY) {
+          int cur = b.openSides().size();
           if (cur <= sides) {
             sides = cur;
             least = b;
@@ -159,37 +232,47 @@ public class Board {
     return least;
   }
 
-  public List<Block> possibleMoves(Block curBlock) {
-    List<Block> initial = openSides(curBlock);
+  /**
+   * Lists the possible {@link Block Blocks} that are valid moves
+   * @param block the start {@link Block Block}
+   * @param flags the level of algorithm to use in validation
+   * @return the {@link List List} of possible moves
+   */
+  public List<Block> possibleMoves(Block block, int flags) {
+    List<Block> initial = block.openSides();
     List<Block> result = new ArrayList<>(initial);
 
     for (Block possible : initial) {
       // Apply move to temp board
       Board copy = new Board(this);
-      copy.fillBlock(possible.getPos(), BlockType.FILLED);
+      copy.fillBlock(possible.getPos(), BlockState.FILLED);
 
       // Sides checks
-      List<Block> oneSided = copy.numOneSided();
-      if (oneSided.size() > 2) {
-        result.remove(possible);
-      } else if (oneSided.size() == 2) {
-        int found = 0;
-        for (Block b : oneSided) {
-          if (b.isAdjacent(possible.getPos())) {
-            found++;
-          }
-        }
-        if (found != 1) {
+      if (flags > 0) {
+        List<Block> oneSided = copy.oneSided();
+        if (oneSided.size() > 2) {
           result.remove(possible);
+        } else if (oneSided.size() == 2) {
+          int found = 0;
+          for (Block b : oneSided) {
+            if (b.isAdjacent(possible.getPos())) {
+              found++;
+            }
+          }
+          if (found != 1) {
+            result.remove(possible);
+          }
         }
       }
 
       // Island check
-      List<Block> island = allNeighbors(leastSides(), null);
-      for (List<Block> l : board) {
-        for (Block b : l) {
-          if (b.getType() == BlockType.EMPTY && !island.contains(b)) {
-            result.remove(possible);
+      if (flags > 1) {
+        List<Block> island = allNeighbors(leastSides(), null);
+        for (List<Block> l : board) {
+          for (Block b : l) {
+            if (b.getState() == BlockState.EMPTY && !island.contains(b)) {
+              result.remove(possible);
+            }
           }
         }
       }
@@ -198,11 +281,15 @@ public class Board {
     return result;
   }
 
-  private List<Block> numOneSided() {
+  /**
+   * Lists the zero to one-sided {@link Block Blocks} on the Board
+   * @return the {@link List List} of {@link Block Blocks}
+   */
+  private List<Block> oneSided() {
     List<Block> oneSided = new ArrayList<>();
     for (List<Block> l : board) {
       for (Block b : l) {
-        if (b.getType() == BlockType.EMPTY && b.openSides().size() <= 1) {
+        if (b.getState() == BlockState.EMPTY && b.openSides().size() <= 1) {
           oneSided.add(b);
         }
       }
@@ -210,22 +297,14 @@ public class Board {
     return oneSided;
   }
 
-  public List<Block> numZeroSided() {
-    List<Block> oneSided = new ArrayList<>();
-    for (List<Block> l : board) {
-      for (Block b : l) {
-        if (b.getType() == BlockType.EMPTY && b.openSides().size() == 1) {
-          oneSided.add(b);
-        }
-      }
-    }
-    return oneSided;
-  }
-
+  /**
+   * Determines if the Board has been filled completely
+   * @return a boolean
+   */
   public boolean gameWon() {
     for (List<Block> l : board) {
       for (Block b : l) {
-        if (b.getType() == BlockType.EMPTY) {
+        if (b.getState() == BlockState.EMPTY) {
           return false;
         }
       }
@@ -233,7 +312,12 @@ public class Board {
     return true;
   }
 
-  public String display(Point2D curPos) {
+  /**
+   * Displays the Board as a {@link String}
+   * @param pos the current {@link Point2D Position}
+   * @return the {@link String}
+   */
+  public String display(Point2D pos) {
     StringBuilder result = new StringBuilder();
     for (int j = 0; j < height; j++) {
       for (int i = 0; i < (2 * width) + 1; i++) {
@@ -241,8 +325,8 @@ public class Board {
       }
       result.append("\n");
       for (int i = 0; i < width; i++) {
-        if (!curPos.equals(new Point2D(i, j))) {
-          result.append("| ").append(getBlock(new Point2D(i, j)).getType()).append(" ");
+        if (!pos.equals(new Point2D(i, j))) {
+          result.append("| ").append(getBlock(new Point2D(i, j)).getState()).append(" ");
         } else {
           result.append("| ").append("O").append(" ");
         }
@@ -254,11 +338,5 @@ public class Board {
     }
     return result.toString();
   }
-
-  @Override
-  public String toString() {
-    return "[Board] " + board.size() + " by " + board.get(0).size();
-  }
-
 
 }

@@ -48,8 +48,6 @@ public class Main {
         }).create();
 
         PuzzleData generated = generator.nextGame();
-        //System.out.println(generated);
-        //new Solver(new Game(generated)).show(150);
         System.out.println(gson.toJson(generated));
         break;
       case "-show":

@@ -37,13 +37,13 @@ public class Game {
   private Game(final Board initialBoard, final Point2D start) {
     this.initialBoard = initialBoard;
     this.start = start;
-    this.initialBoard.fillBlock(start, BlockType.FILLED);
+    this.initialBoard.fillBlock(start, BlockState.FILLED);
     this.stack = new Stack<>();
     this.stack.push(new GameState(initialBoard, start, possibleMoves(initialBoard, start)));
   }
 
   private List<Block> possibleMoves(Board board, Point2D pos) {
-    return board.possibleMoves(board.getBlock(pos));
+    return board.possibleMoves(board.getBlock(pos), 2);
   }
 
   public void attemptMove(Point2D pos) {
@@ -61,7 +61,7 @@ public class Game {
     curMoves().remove(used);
 
     Board nextBoard = new Board(curBoard());
-    nextBoard.fillBlock(pos, BlockType.FILLED);
+    nextBoard.fillBlock(pos, BlockState.FILLED);
     stack.push(new GameState(nextBoard, pos, possibleMoves(nextBoard, pos)));
   }
 
