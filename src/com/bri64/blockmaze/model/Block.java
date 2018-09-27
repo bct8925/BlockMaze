@@ -17,7 +17,7 @@ public class Block {
     return type;
   }
 
-  public Block(final Board board, final BlockType type) {
+  public Block(final Board board, BlockType type) {
     this.board = board;
     this.type = type;
   }

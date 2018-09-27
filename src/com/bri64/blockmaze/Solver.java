@@ -4,6 +4,7 @@ import com.bri64.blockmaze.model.Block;
 import com.bri64.blockmaze.model.Game;
 import com.bri64.blockmaze.model.Solution;
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Random;
 import javafx.geometry.Point2D;
@@ -71,11 +72,12 @@ public class Solver {
       solvable = Boolean.TRUE;
       System.out.print("\033[H\033[2J");
       System.out.println(display());
-    } catch (Exception stackEx) {
+    } catch (EmptyStackException empty) {
       solvable = Boolean.FALSE;
     }
   }
 
+  @SuppressWarnings("InfiniteLoopStatement")
   public List<Solution> solveMulti() {
     List<Solution> solutions = new ArrayList<>();
     try {
@@ -88,7 +90,7 @@ public class Solver {
         solutions.add(game.getSolution());
         game.nextWin();
       }
-    } catch (Exception stackEx) {
+    } catch (EmptyStackException empty) {
       if (solutions.size() == 0) {
         solvable = Boolean.FALSE;
       }

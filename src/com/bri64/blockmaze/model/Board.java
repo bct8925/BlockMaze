@@ -14,16 +14,18 @@ public class Board {
   public int getWidth() {
     return width;
   }
+
   public int getHeight() {
     return height;
   }
 
-  public Board(PuzzleData data) {
+  public Board(final PuzzleData data) {
     this(data.getWidth(), data.getHeight());
     for (Point2D p : data.getHoles()) {
       fillBlock(p, BlockType.HOLE);
     }
   }
+
   public Board(int width, int height) {
     this.width = width;
     this.height = height;
@@ -37,7 +39,8 @@ public class Board {
       board.add(temp);
     }
   }
-  public Board(Board b) {
+
+  public Board(final Board b) {
     this.width = b.getWidth();
     this.height = b.getHeight();
     this.board = new ArrayList<>();
@@ -59,12 +62,10 @@ public class Board {
     int x = -1;
     int y = -1;
 
-    boolean found = false;
     outer:
     for (int i = 0; i < width; i++) {
       for (int j = 0; j < height; j++) {
         if (getBlock(new Point2D(i, j)).equals(block)) {
-          found = true;
           x = i;
           y = j;
           break outer;

@@ -4,6 +4,7 @@ import javafx.geometry.Point2D;
 
 @SuppressWarnings("WeakerAccess")
 public class PuzzleData {
+
   private int width;
   private int height;
   private Point2D start;
@@ -12,12 +13,15 @@ public class PuzzleData {
   public int getWidth() {
     return width;
   }
+
   public int getHeight() {
     return height;
   }
+
   public Point2D getStart() {
     return start;
   }
+
   public Point2D[] getHoles() {
     return holes;
   }

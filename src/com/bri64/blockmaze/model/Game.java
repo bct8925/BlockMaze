@@ -3,6 +3,7 @@ package com.bri64.blockmaze.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Stack;
 import javafx.geometry.Point2D;
@@ -16,12 +17,15 @@ public class Game {
   private Board curBoard() {
     return stack.peek().getBoard();
   }
+
   private Point2D curPos() {
     return stack.peek().getPos();
   }
+
   private Block curBlock() {
     return stack.peek().getBoard().getBlock(curPos());
   }
+
   public List<Block> curMoves() {
     return stack.peek().getMoves();
   }
@@ -29,7 +33,8 @@ public class Game {
   public Game(final PuzzleData data) {
     this(new Board(data), data.getStart());
   }
-  private Game(final Board initialBoard, Point2D start) {
+
+  private Game(final Board initialBoard, final Point2D start) {
     this.initialBoard = initialBoard;
     this.start = start;
     this.initialBoard.fillBlock(start, BlockType.FILLED);
@@ -68,7 +73,7 @@ public class Game {
     return curBoard().gameWon();
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked", "InfiniteLoopStatement"})
   public Solution getSolution() {
     Stack<GameState> copy = (Stack) stack.clone();
     List<Point2D> moves = new ArrayList<>();
@@ -77,7 +82,7 @@ public class Game {
         moves.add(copy.peek().getPos());
         copy.pop();
       }
-    } catch (Exception stackEx) {
+    } catch (EmptyStackException empty) {
       Collections.reverse(moves);
     }
     return new Solution(moves);

@@ -14,12 +14,13 @@ public class Solution {
 
   @Override
   public String toString() {
-    String result = "";
-		String comma = "";
-		for (Point2D p : moves) {
-			result += comma + "[" + (int) p.getX() + "," + (int) p.getY() + "]"; 
-			comma = ",";
-		}
-		return result;
+    StringBuilder result = new StringBuilder();
+    String comma = "";
+    for (Point2D p : moves) {
+      result.append(comma).append("[").append((int) p.getX()).append(",").append((int) p.getY())
+          .append("]");
+      comma = ",";
+    }
+    return result.toString();
   }
 }

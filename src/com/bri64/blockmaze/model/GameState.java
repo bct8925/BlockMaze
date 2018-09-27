@@ -22,7 +22,7 @@ class GameState {
     return possibleMoves;
   }
 
-  public GameState(Board curBoard, Point2D curPos, List<Block> possibleMoves) {
+  public GameState(final Board curBoard, final Point2D curPos, final List<Block> possibleMoves) {
     this.curBoard = curBoard;
     this.curPos = curPos;
     this.possibleMoves = possibleMoves;
