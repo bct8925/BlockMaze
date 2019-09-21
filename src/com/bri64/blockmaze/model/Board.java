@@ -26,7 +26,7 @@ public class Board {
   private List<List<Block>> board;
 
   /**
-   * Get the Board's width
+   * Gets the Board's width
    * @return the width
    */
   public int getWidth() {
@@ -34,7 +34,7 @@ public class Board {
   }
 
   /**
-   * Get the Board's height
+   * Gets the Board's height
    * @return the height
    */
   public int getHeight() {
@@ -133,7 +133,7 @@ public class Board {
   /**
    * Gets the {@link Block Blocks} that are adjacent and empty
    * @param block the {@link Block Block} to check
-   * @return a {@link List List} of {@link Block Blocks}
+   * @return the {@link List List} of {@link Block Blocks}
    */
   public List<Block> openSides(Block block) {
     return openSides(block.getPos());

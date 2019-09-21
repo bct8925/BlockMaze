@@ -55,14 +55,14 @@ public class Block {
 
   /**
    * Gets the Blocks that are adjacent and empty
-   * @return a {@link List List} of Blocks
+   * @return the {@link List List} of Blocks
    */
   public List<Block> openSides() {
     return board.openSides(this);
   }
 
   /**
-   * Determines if a another Block is adjacent in the cardinal directions
+   * Determines if another Block is adjacent in the cardinal directions
    * @param adj the {@link Point2D Position} of the other Block
    * @return a boolean
    */
