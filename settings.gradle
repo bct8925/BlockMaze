@@ -1,0 +1,4 @@
+rootProject.name = 'BlockMaze'
+
+
+enableFeaturePreview('GRADLE_METADATA')
